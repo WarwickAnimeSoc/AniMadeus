@@ -37,7 +37,7 @@ public class Main {
 
     // Define the variables that will be used throughout this main scope
     private static String key = "";
-    private static JDA jda;
+    public static JDA jda;
     static final CommandParser parser = new CommandParser();
 
     // Hash-map containing all of the possible commands and their corresponding interface
@@ -47,7 +47,6 @@ public class Main {
         // Define the keys and load the bot
         BotLoader loader = new BotLoader("config.txt");
         key = BotLoader.config.getValue("DISCORD-KEY");
-
         // Begin to load in JDA and connect to the Discord API
         try{
             jda = new JDABuilder(AccountType.BOT).setToken(key).buildBlocking();
