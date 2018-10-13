@@ -61,7 +61,8 @@ public class Main {
 
         // General Commands
         commands.put("member", new MemberCreate());
-        //commands.put("events", new Events());            CURRENTLY DISABLED UNTIL WORKING
+        commands.put("events", new Events());
+        commands.put("library", new LibrarySearch());
 
     }
 

@@ -8,3 +8,9 @@ pom\.xml
 Anisoc-Bot\.iml
 
 target/
+
+launch\.sh
+
+*.jar
+
+src/main/java/META-INF/

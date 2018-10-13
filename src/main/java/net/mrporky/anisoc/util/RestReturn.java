@@ -2,6 +2,9 @@ package net.mrporky.anisoc.util;
 
 import net.mrporky.anisoc.members.Member;
 import net.mrporky.anisoc.members.Members;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,14 +18,41 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
 
 /*
     TODO: Re-generalise this class to allow for all possible RestAPIs to be supported
     This class takes an XMLFile input (was generalised but now only for SU-API) and returns a members object for this value
  */
 public class RestReturn {
-    public Members getRest(String url) {
+
+    public JSONArray getRest(String url) throws IOException, JSONException {
+        InputStream is = new URL(url).openStream();
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            JSONArray json = new JSONArray(jsonText);
+
+
+            return json;
+        } finally {
+            is.close();
+        }
+    }
+
+    private String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
+    }
+
+    public Members getXML(String url) {
         Members members = new Members();
 
         try {

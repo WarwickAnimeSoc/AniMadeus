@@ -2,6 +2,7 @@ package net.mrporky.anisoc.command;
 
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
 import net.dv8tion.jda.core.managers.GuildController;
 import net.mrporky.anisoc.Command;
 import net.mrporky.anisoc.members.Member;
@@ -31,10 +32,15 @@ public class MemberCreate implements Command {
 
         // Access the SU API
         RestReturn rest = new RestReturn();
-        Members members = rest.getRest(BotLoader.config.getValue("SU-API"));
+        Members members = rest.getXML(BotLoader.config.getValue("SU-API"));
         try {
             // Create objects required for this scope
-            Member member = members.getMember(args[0]);
+            Member member;
+            try {
+                member = members.getMember(args[0]);
+            }catch (ArrayIndexOutOfBoundsException e){
+                throw new MemberNotFoundException();
+            }
             String idUser = "", discordTag = "";
 
             // Create a query object that can be used to access the Anisoc database
@@ -84,6 +90,9 @@ public class MemberCreate implements Command {
                 } catch (IndexOutOfBoundsException e) {
                     event.getTextChannel().sendMessage(event.getGuild().getOwner().getAsMention() + " - Could not add member to "
                             + event.getAuthor().getName() + "! Role does not exist!").queue();
+                } catch (HierarchyException e){
+                    event.getTextChannel().sendMessage(event.getGuild().getOwner().getAsMention() + ": Cannot add role to " + event.getAuthor().getName() + "! Cannot apply a role of equal or higher permission " +
+                            "than own to another user! Please give the bot elevated permissions!").queue();
                 }
             }else{
                 throw new MemberNotFoundException();
@@ -98,7 +107,8 @@ public class MemberCreate implements Command {
 
     @Override
     public void help(MessageReceivedEvent event) {
-
+        event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ": To gain access to member role, Add your Discord Name and Discriminator [Username#UserID] to your profile at " +
+                "https://animesoc.co.uk/members/profile/ and run the command again with the format: !member <Your University ID>!").queue();
     }
 
     @Override

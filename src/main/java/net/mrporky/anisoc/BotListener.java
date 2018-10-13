@@ -13,7 +13,7 @@ public class BotListener extends ListenerAdapter{
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
-        if(!event.getAuthor().isBot()){
+        if(!event.getAuthor().isBot() && event.getMessage().getContentRaw().charAt(0) == '!'){
             if(event.getChannelType().isGuild()) {
                 Main.parseCommand(Main.parser.parse(event.getMessage().getContentRaw().toLowerCase(), event));
             }
