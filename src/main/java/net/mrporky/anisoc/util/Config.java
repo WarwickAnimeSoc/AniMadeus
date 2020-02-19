@@ -19,10 +19,15 @@ public class Config {
     private String filename;
     private HashMap<String, String> values = new HashMap<>();
 
+
     // Basic constructor
     public Config(String filename){
         this.filename = filename;
         loadConfig();
+    }
+
+    public HashMap<String, String> getConfigRaw(){
+        return values;
     }
 
     private void loadConfig(){
