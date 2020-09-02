@@ -19,6 +19,10 @@ public class WelcomeReactionEventHandler implements Reactions {
         // Get event info initially for neatness
         Long eventChannel = event.getChannel().getIdLong();
         String eventReact = event.getReactionEmote().getName();
+
+        // Uncomment this for figuring out exact internal representation of reactions
+        // System.out.println(eventReact);
+
         // Search through channels to find roleReactPairs for the channel the react occurred in
         for (Channel channel : configData.getChannels()) {
             if (channel.getChannelId().equals(eventChannel)) {

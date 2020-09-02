@@ -1,5 +1,4 @@
 {
-
   "discordKey": "NzUwNzE2NTM0NzY2NDM2MzYy.X0-lQQ.ouKuuVYiuG0P2K4hx8dDN9XYoOg",
   "suAPI": "https://www.warwicksu.com/membershipapi/listmembers/c76aa4b2-ae70-43e7-b59f-81d680deb1c5",
   "dbHostName": "localhost",
@@ -8,7 +7,6 @@
   "dbPassword": "somerandompassword",
 
   "channels": [
-
     {
       "channelId": 750723547734868108,
       "roleReactPairs": [
@@ -21,7 +19,5 @@
         {"react": "\uD83C\uDF99", "role": "vc"}
       ]
     }
-
   ]
-
 }
