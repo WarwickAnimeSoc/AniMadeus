@@ -1,23 +1,24 @@
 package net.mrporky.anisoc.util;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /*
     This class loads the config into memory and allows for us to access the keys
      / secret values without having them written into the source code.
+     Note: This has been updated so the data is held in the ConfigData object, for use with JSON config files
  */
 public class Config {
     private final static Logger LOGGER = Logger.getLogger(Config.class.getName());
 
     // String / Hashmap to store keys / values
     private String filename;
-    private HashMap<String, String> values = new HashMap<>();
+    private ConfigData configData;
 
 
     // Basic constructor
@@ -26,23 +27,12 @@ public class Config {
         loadConfig();
     }
 
-    public HashMap<String, String> getConfigRaw(){
-        return values;
-    }
-
     private void loadConfig(){
-        BufferedReader br;
         try {
-            br = new BufferedReader(new FileReader(filename));
-            String line = br.readLine();
-            // While we have another command that can be parsed
-            while(line != null){
-                // Split on spaces (will split on multiple)
-                String[] splitPair = line.split("\\s+");
-                values.put(splitPair[0], splitPair[1]);
-                line = br.readLine();
-            }
-            br.close();
+            // Jackson will read the JSON file using the ObjectMapper, and fills in the class structure in ConfigData
+            File file = new File(this.filename);
+            ObjectMapper objectMapper = new ObjectMapper();
+            this.configData = objectMapper.readValue(file, ConfigData.class);
         } catch (FileNotFoundException e) {
             LOGGER.log(Level.WARNING, "Config file not found! Any settings will not be applied!");
         } catch (IOException e) {
@@ -51,8 +41,8 @@ public class Config {
         LOGGER.log(Level.INFO, "Successfully loading the configuration settings");
     }
 
-    // Get the values from the hash-map
-    public String getValue(String key){
-        return values.get(key);
+    // Get the config data for further interrogation
+    public ConfigData getConfigData() {
+        return configData;
     }
 }

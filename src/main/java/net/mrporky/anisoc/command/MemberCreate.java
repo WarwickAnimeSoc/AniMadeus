@@ -17,10 +17,12 @@ import java.sql.SQLException;
 
 public class MemberCreate implements Command {
 
-    private String hostname = BotLoader.config.getValue("DBHOSTNAME");
-    private String database = BotLoader.config.getValue("DBNAME");
-    private String username = BotLoader.config.getValue("DBUSERNAME");
-    private String password = BotLoader.config.getValue("DBPASSWORD");
+    private final BotLoader loader = new BotLoader("config.json");
+    // Grab values from config via botloader - TODO: change this to reduce load on botloader
+    private final String hostname = loader.getConfigData().getDbHostName();
+    private final String database = loader.getConfigData().getDbName();
+    private final String username = loader.getConfigData().getDbUsername();
+    private final String password = loader.getConfigData().getDbPassword();
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -32,7 +34,7 @@ public class MemberCreate implements Command {
 
         // Access the SU API
         RestReturn rest = new RestReturn();
-        Members members = rest.getXML(BotLoader.config.getValue("SU-API"));
+        Members members = rest.getXML(loader.getConfigData().getSuAPI());
         try {
             // Create objects required for this scope
             Member member;
