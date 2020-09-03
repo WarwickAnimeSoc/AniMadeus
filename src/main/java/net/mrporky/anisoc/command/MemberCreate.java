@@ -8,7 +8,8 @@ import net.mrporky.anisoc.Command;
 import net.mrporky.anisoc.members.Member;
 import net.mrporky.anisoc.members.MemberNotFoundException;
 import net.mrporky.anisoc.members.Members;
-import net.mrporky.anisoc.util.BotLoader;
+import net.mrporky.anisoc.util.Config;
+import net.mrporky.anisoc.util.ConfigData;
 import net.mrporky.anisoc.util.RestReturn;
 import net.mrporky.anisoc.util.SQLQuery;
 
@@ -17,12 +18,12 @@ import java.sql.SQLException;
 
 public class MemberCreate implements Command {
 
-    private final BotLoader loader = new BotLoader("config.json");
-    // Grab values from config via botloader - TODO: change this to reduce load on botloader
-    private final String hostname = loader.getConfigData().getDbHostName();
-    private final String database = loader.getConfigData().getDbName();
-    private final String username = loader.getConfigData().getDbUsername();
-    private final String password = loader.getConfigData().getDbPassword();
+    // Grab values from config instance directly
+    private final ConfigData configData = Config.getInstance().getConfigData();
+    private final String hostname = configData.getDbHostName();
+    private final String database = configData.getDbName();
+    private final String username = configData.getDbUsername();
+    private final String password = configData.getDbPassword();
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -34,7 +35,7 @@ public class MemberCreate implements Command {
 
         // Access the SU API
         RestReturn rest = new RestReturn();
-        Members members = rest.getXML(loader.getConfigData().getSuAPI());
+        Members members = rest.getXML(configData.getSuAPI());
         try {
             // Create objects required for this scope
             Member member;

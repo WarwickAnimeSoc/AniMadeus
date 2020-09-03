@@ -42,6 +42,8 @@ public class Main {
     private static String key = "";
     public static JDA jda;
     static final CommandParser parser = new CommandParser();
+    // Config loaded via BotLoader, but could be done directly from Config (functionally identical)
+    // This is left for other future uses of the BotLoader object
     public static BotLoader loader = new BotLoader("config.json");;
     static final WelcomeReactionEventHandler handler = new WelcomeReactionEventHandler();
 

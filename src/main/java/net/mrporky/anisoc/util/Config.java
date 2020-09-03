@@ -12,19 +12,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
     This class loads the config into memory and allows for us to access the keys
      / secret values without having them written into the source code.
      Note: This has been updated so the data is held in the ConfigData object, for use with JSON config files
+     Note: This has again been updated to follow the Singleton pattern, so that configs are only loaded once
+        Access the config through the getInstance() method
  */
 public class Config {
     private final static Logger LOGGER = Logger.getLogger(Config.class.getName());
 
-    // String / Hashmap to store keys / values
-    private String filename;
+    // instance is part of the Singleton pattern
+    private static Config instance = null;
+    private final String filename;
     private ConfigData configData;
 
-
-    // Basic constructor
-    public Config(String filename){
+    // Constructor is private to avoid any other code creating Config objects
+    private Config(String filename){
         this.filename = filename;
         loadConfig();
+    }
+
+    // Loads config if not already loaded
+    public static Config getInstance(String configPath) {
+        if (instance == null) {
+            instance = new Config(configPath);
+        }
+        return instance;
+    }
+
+    public static Config getInstance() {
+        if (instance == null) {
+            instance = new Config("config.json");
+        }
+        return instance;
     }
 
     private void loadConfig(){

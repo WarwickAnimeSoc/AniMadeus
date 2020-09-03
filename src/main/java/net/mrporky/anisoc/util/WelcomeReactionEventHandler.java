@@ -11,8 +11,7 @@ import java.util.List;
 
 public class WelcomeReactionEventHandler implements Reactions {
 
-    private final BotLoader loader = new BotLoader("config.json");
-    private final ConfigData configData = loader.getConfigData();
+    private final ConfigData configData = Config.getInstance().getConfigData();
 
     @Override
     public void onReaction(MessageReactionAddEvent event) {
