@@ -22,7 +22,6 @@
 
 package net.mrporky.anisoc;
 
-import antlr.debug.MessageEvent;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -31,7 +30,7 @@ import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
 import net.mrporky.anisoc.command.*;
 import net.mrporky.anisoc.util.BotLoader;
 import net.mrporky.anisoc.util.SchedulerService;
-import net.mrporky.anisoc.util.WelcomeReactionEvent;
+import net.mrporky.anisoc.util.WelcomeReactionEventHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,18 +42,19 @@ public class Main {
     private static String key = "";
     public static JDA jda;
     static final CommandParser parser = new CommandParser();
-    public static BotLoader loader;
+    // Config loaded via BotLoader, but could be done directly from Config (functionally identical)
+    // This is left for other future uses of the BotLoader object
+    public static BotLoader loader = new BotLoader("config.json");;
+    static final WelcomeReactionEventHandler handler = new WelcomeReactionEventHandler();
 
     // Hash-map containing all of the possible commands and their corresponding interface
     private static HashMap<String, Command> commands = new HashMap<>();
     private static HashMap<String, Command> strings = new HashMap<>();
-    private static HashMap<String, Reactions> reactions = new HashMap<>();
 
 
     public Main(){
         // Define the keys and load the bot
-        loader = new BotLoader("config.txt");
-        key = BotLoader.config.getValue("DISCORD-KEY");
+        key = loader.getConfigData().getDiscordKey();
         // Begin to load in JDA and connect to the Discord API
         try{
             jda = new JDABuilder(AccountType.BOT).setToken(key).buildBlocking();
@@ -71,7 +71,6 @@ public class Main {
         commands.put("member", new MemberCreate());
         commands.put("events", new Events());
         commands.put("library", new LibrarySearch());
-        reactions.put("WELCOMECHANNEL", new WelcomeReactionEvent());
     }
 
     /**
@@ -95,11 +94,24 @@ public class Main {
         }
     }
 
+    /**
+     * Passes the reaction event on to the handler
+     * @return void
+     * @param event
+     */
     public static void parseReactionEvent(MessageReactionAddEvent event){
-        if (event.getChannel().getName().equals("welcome")){
-            // At this point we need to get who has reacted
-            reactions.get("WELCOMECHANNEL").onReaction(event);
-        }
+        System.out.println("Reaction added");
+        handler.onReaction(event);
+    }
+
+    /**
+     * Passes the reaction event on to the handler
+     * @return void
+     * @param event
+     */
+    public static void parseReactionRemoveEvent(MessageReactionRemoveEvent event) {
+        System.out.println("Reaction removed");
+        handler.onReactionRemove(event);
     }
 
     public static void parseString(CommandParser.CommandContainer cmd){
@@ -116,13 +128,6 @@ public class Main {
             if(!content.toLowerCase().contains("numberwang") && !content.toLowerCase().contains("wangernum") && !content.matches(".*\\d.*")){
                 cmd.event.getMessage().delete().queue();
             }
-        }
-    }
-
-    public static void parseReactionRemoveEvent(MessageReactionRemoveEvent event) {
-        if (event.getChannel().getName().equals("welcome")){
-            // At this point we need to get who has reacted
-            reactions.get("WELCOMECHANNEL").onReactionRemove(event);
         }
     }
 }

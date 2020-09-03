@@ -8,7 +8,8 @@ import net.mrporky.anisoc.Command;
 import net.mrporky.anisoc.members.Member;
 import net.mrporky.anisoc.members.MemberNotFoundException;
 import net.mrporky.anisoc.members.Members;
-import net.mrporky.anisoc.util.BotLoader;
+import net.mrporky.anisoc.util.Config;
+import net.mrporky.anisoc.util.ConfigData;
 import net.mrporky.anisoc.util.RestReturn;
 import net.mrporky.anisoc.util.SQLQuery;
 
@@ -17,10 +18,12 @@ import java.sql.SQLException;
 
 public class MemberCreate implements Command {
 
-    private String hostname = BotLoader.config.getValue("DBHOSTNAME");
-    private String database = BotLoader.config.getValue("DBNAME");
-    private String username = BotLoader.config.getValue("DBUSERNAME");
-    private String password = BotLoader.config.getValue("DBPASSWORD");
+    // Grab values from config instance directly
+    private final ConfigData configData = Config.getInstance().getConfigData();
+    private final String hostname = configData.getDbHostName();
+    private final String database = configData.getDbName();
+    private final String username = configData.getDbUsername();
+    private final String password = configData.getDbPassword();
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -32,7 +35,7 @@ public class MemberCreate implements Command {
 
         // Access the SU API
         RestReturn rest = new RestReturn();
-        Members members = rest.getXML(BotLoader.config.getValue("SU-API"));
+        Members members = rest.getXML(configData.getSuAPI());
         try {
             // Create objects required for this scope
             Member member;
