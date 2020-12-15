@@ -1,13 +1,15 @@
 package net.mrporky.anisoc.util;
 
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
-import net.dv8tion.jda.core.managers.GuildController;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.mrporky.anisoc.Reactions;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WelcomeReactionEventHandler implements Reactions {
 
@@ -29,12 +31,12 @@ public class WelcomeReactionEventHandler implements Reactions {
                 // Do the same as above to find the role associated with the reaction
                 for (RoleReactPair rrp : roleReactPairs) {
                     if (rrp.getReact().equals(eventReact)) {
-                        System.out.println("Adding role");
+                        System.out.println("Adding role " + rrp.getRole() + " to " + event.getUser().getName());
                         // Gets correct role based on name and assigns it to the user who reacted
                         try {
+                            Member member = event.retrieveMember().complete();
                             Role role = event.getGuild().getRolesByName(rrp.getRole(), true).get(0);
-                            GuildController controller = new GuildController(event.getGuild());
-                            controller.addRolesToMember(event.getMember(), role).queue();
+                            event.getGuild().addRoleToMember(member, role).queue();
                         } catch (IndexOutOfBoundsException e) {
                             // In case role does not exist
                             System.out.println("Specified role does not exist in server");
@@ -67,9 +69,9 @@ public class WelcomeReactionEventHandler implements Reactions {
                         System.out.println("Removing role");
                         // Gets correct role based on name and removes it from the user who reacted
                         try {
+                            Member member = event.retrieveMember().complete();
                             Role role = event.getGuild().getRolesByName(rrp.getRole(), true).get(0);
-                            GuildController controller = new GuildController(event.getGuild());
-                            controller.removeRolesFromMember(event.getMember(), role).queue();
+                            event.getGuild().removeRoleFromMember(member, role).queue();
                         } catch (IndexOutOfBoundsException e) {
                             // In case role does not exist
                             System.out.println("Specified role does not exist in server");

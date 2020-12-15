@@ -1,7 +1,7 @@
 package net.mrporky.anisoc.util;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Activity;
 import net.mrporky.anisoc.Main;
 
 import java.io.BufferedReader;
@@ -15,7 +15,7 @@ public class NameManager {
     private JDA jda;
     private List<String> list;
     private String filePath;
-    private Game.GameType type = Game.GameType.DEFAULT;
+    private Activity.ActivityType type = Activity.ActivityType.CUSTOM_STATUS;
     private boolean setup = false;
     int lineCount = 0;
 
@@ -23,7 +23,7 @@ public class NameManager {
         this.filePath = filePath;
     }
 
-    public NameManager(String filePath, Game.GameType type, JDA jda) {
+    public NameManager(String filePath, Activity.ActivityType type, JDA jda) {
         this.filePath = filePath;
         this.type = type;
         this.jda = jda;
@@ -46,7 +46,7 @@ public class NameManager {
             Random random = new Random();
             int rand = random.nextInt(list.size());
 
-            Main.jda.getPresence().setGame(Game.of(type, list.get(random.nextInt(list.size()))));
+            Main.jda.getPresence().setActivity(Activity.of(type, list.get(random.nextInt(list.size()))));
 
             setup = true;
         }catch(IOException e){

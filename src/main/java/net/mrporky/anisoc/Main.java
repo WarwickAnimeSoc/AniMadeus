@@ -22,11 +22,13 @@
 
 package net.mrporky.anisoc;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.core.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.Compression;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.mrporky.anisoc.command.*;
 import net.mrporky.anisoc.util.BotLoader;
 import net.mrporky.anisoc.util.SchedulerService;
@@ -57,9 +59,16 @@ public class Main {
         key = loader.getConfigData().getDiscordKey();
         // Begin to load in JDA and connect to the Discord API
         try{
-            jda = new JDABuilder(AccountType.BOT).setToken(key).buildBlocking();
-            jda.addEventListener(new BotListener());
-            jda.setAutoReconnect(true);
+            JDABuilder builder = JDABuilder.create(key,
+                    GatewayIntent.GUILD_MESSAGES,
+                    GatewayIntent.GUILD_EMOJIS,
+                    GatewayIntent.GUILD_MESSAGE_REACTIONS);
+            // Enable the bulk delete event
+            builder.setBulkDeleteSplittingEnabled(false);
+            // Disable compression (not recommended)
+            builder.setCompression(Compression.NONE);
+            builder.addEventListeners(new BotListener());
+            jda = builder.build();
 
             // Begin the Scheduler thread running the Service class instance
             new Thread(SchedulerService::new).start();
@@ -100,7 +109,6 @@ public class Main {
      * @param event
      */
     public static void parseReactionEvent(MessageReactionAddEvent event){
-        System.out.println("Reaction added");
         handler.onReaction(event);
     }
 
@@ -110,7 +118,6 @@ public class Main {
      * @param event
      */
     public static void parseReactionRemoveEvent(MessageReactionRemoveEvent event) {
-        System.out.println("Reaction removed");
         handler.onReactionRemove(event);
     }
 

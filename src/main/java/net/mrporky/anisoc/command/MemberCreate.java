@@ -1,9 +1,8 @@
 package net.mrporky.anisoc.command;
 
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
-import net.dv8tion.jda.core.managers.GuildController;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.mrporky.anisoc.Command;
 import net.mrporky.anisoc.members.Member;
 import net.mrporky.anisoc.members.MemberNotFoundException;
@@ -85,8 +84,7 @@ public class MemberCreate implements Command {
                     // Make sure that the role exists, if not tell the server owner that the role does not exist and should be created
                     if ((role = event.getGuild().getRolesByName("Member", true).get(0)) != null) {
                         // Access the guild controller allowing for the assignment of the roles to the user
-                        GuildController controller = new GuildController(event.getGuild());
-                        controller.addRolesToMember(event.getMember(), role).queue();
+                        event.getGuild().addRoleToMember(event.getMember(), role).queue();
 
                         event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + " - Successfully added member role!").queue();
                     }

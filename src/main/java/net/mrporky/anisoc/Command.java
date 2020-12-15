@@ -1,6 +1,7 @@
 package net.mrporky.anisoc;
 
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 /*
     Interface defining the standard layout for each of the classes that manages a individual command
