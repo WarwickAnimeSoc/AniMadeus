@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.mrporky.anisoc.Command;
 import net.mrporky.anisoc.util.RestReturn;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -51,58 +52,62 @@ public class Events implements Command {
 
         LinkedList<JSONObject> objectsToShow = new LinkedList<>();
 
-        for (Object eventItem : events) {
-            JSONObject obj = (JSONObject) eventItem;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date parsedDate = null;
-            try {
-                parsedDate = dateFormat.parse(String.valueOf(obj.get("when")));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            assert parsedDate != null;
-            if (((parsedDate.getTime() + (86400 * 1000)) > (System.currentTimeMillis()))) {
-                objectsToShow.addFirst(obj);
-            }
-        }
-
-        if (objectsToShow.size() > 0) {
-            EmbedBuilder status_builder = new EmbedBuilder();
-            status_builder.setColor(event.getMember().getColor());
-
-            status_builder.setTimestamp(Instant.now());
-            status_builder.setTitle("Events", "https://animesoc.co.uk/events/1/");
-            status_builder.setFooter("A full event history can be found at" +
-                    " https://animesoc.co.uk/events/1/", null);
-
-            if(objectsToShow.size() > 4){
-                status_builder.setDescription("Found " + objectsToShow.size() + " events, but due to space, " +
-                        "only showing the top 4! Check the website for the full list!");
-            }
-
-            for (int i = 0; i < (Math.min(objectsToShow.size(), 4)); i++) {
-                JSONObject item = objectsToShow.get(i);
-                String details = String.valueOf(item.get("details")).replaceAll("\\<[^>]*>","");
-                if(details.length() > 1000){
-                    details = details.substring(0, 800);
-                    details += "...";
+        try {
+            for (Object eventItem : events) {
+                JSONObject obj = (JSONObject) eventItem;
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date parsedDate = null;
+                try {
+                    parsedDate = dateFormat.parse(String.valueOf(obj.get("when")));
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-                status_builder.addField(String.valueOf(item.get("title")),
-                        "https://animesoc.co.uk/events/event_detail/"
-                                + item.get("id") +"\n" + details, true);
+
+                assert parsedDate != null;
+                if (((parsedDate.getTime() + (86400 * 1000)) > (System.currentTimeMillis()))) {
+                    objectsToShow.addFirst(obj);
+                }
             }
 
+            if (objectsToShow.size() > 0) {
+                EmbedBuilder status_builder = new EmbedBuilder();
+                status_builder.setColor(event.getMember().getColor());
 
-            MessageEmbed embed = status_builder.build();
-            MessageBuilder mbuilder = new MessageBuilder();
-            mbuilder.setEmbed(embed);
+                status_builder.setTimestamp(Instant.now());
+                status_builder.setTitle("Events", "https://animesoc.co.uk/events/1/");
+                status_builder.setFooter("A full event history can be found at" +
+                        " https://animesoc.co.uk/events/1/", null);
 
-            Message message = mbuilder.build();
-            event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ", I found the following events:").queue();
-            event.getChannel().sendMessage(message).queue();
-        }else{
-            event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ", Sorry, I do not see any events coming up soon. You can see all events at https://animesoc.co.uk/events/1/").queue();
+                if (objectsToShow.size() > 4) {
+                    status_builder.setDescription("Found " + objectsToShow.size() + " events, but due to space, " +
+                            "only showing the top 4! Check the website for the full list!");
+                }
+
+                for (int i = 0; i < (Math.min(objectsToShow.size(), 4)); i++) {
+                    JSONObject item = objectsToShow.get(i);
+                    String details = String.valueOf(item.get("details")).replaceAll("\\<[^>]*>", "");
+                    if (details.length() > 1000) {
+                        details = details.substring(0, 800);
+                        details += "...";
+                    }
+                    status_builder.addField(String.valueOf(item.get("title")),
+                            "https://animesoc.co.uk/events/event_detail/"
+                                    + item.get("id") + "\n" + details, true);
+                }
+
+
+                MessageEmbed embed = status_builder.build();
+                MessageBuilder mbuilder = new MessageBuilder();
+                mbuilder.setEmbed(embed);
+
+                Message message = mbuilder.build();
+                event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ", I found the following events:").queue();
+                event.getChannel().sendMessage(message).queue();
+            } else {
+                event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ", Sorry, I do not see any events coming up soon. You can see all events at https://animesoc.co.uk/events/1/").queue();
+            }
+        }catch(JSONException e){
+            event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ", Sorry, there's been a problem with my ghost. I could not find an internal value!").queue();
         }
     }
 
