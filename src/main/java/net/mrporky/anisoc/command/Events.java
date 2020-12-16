@@ -58,7 +58,7 @@ public class Events implements Command {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date parsedDate = null;
                 try {
-                    parsedDate = dateFormat.parse(String.valueOf(obj.get("when")));
+                    parsedDate = dateFormat.parse(String.valueOf(obj.get("event_start_date")));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

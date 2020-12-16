@@ -40,7 +40,7 @@ public class LibrarySearch implements Command {
                 status_builder.setColor(event.getMember().getColor());
 
                 status_builder.setTimestamp(Instant.now());
-                status_builder.setTitle("Events", "https://animesoc.co.uk/library/");
+                status_builder.setTitle("Library results", "https://animesoc.co.uk/library/");
                 status_builder.setFooter("A full library can be viewed at https://animesoc.co.uk/library",
                         null);
 
@@ -56,7 +56,7 @@ public class LibrarySearch implements Command {
                         synopsis = synopsis.substring(0, 800);
                         synopsis += "...";
                     }
-                    status_builder.addField(String.valueOf(item.get("title_eng")),
+                    status_builder.addField(String.valueOf(item.get("title_english")),
                             "https://animesoc.co.uk/library/series/" + item.get("id") + "\n"
                                     + synopsis, true);
                 }
