@@ -29,18 +29,14 @@ public class LibrarySearch implements Command {
         try {
             jsonArray = restReturn.getRest("https://animesoc.co.uk/api/library/?format=json&search="
                     + URLEncoder.encode(String.join(" ", args), "UTF-8"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
             assert jsonArray != null;
             if (jsonArray.length() > 0) {
                 EmbedBuilder status_builder = new EmbedBuilder();
                 status_builder.setColor(event.getMember().getColor());
 
                 status_builder.setTimestamp(Instant.now());
-                status_builder.setTitle("Library results", "https://animesoc.co.uk/library/");
+                status_builder.setTitle("Library results", "https://animesoc.co.uk/library/1/?category=all&query="
+                        + URLEncoder.encode(String.join(" ", args), "UTF-8"));
                 status_builder.setFooter("A full library can be viewed at https://animesoc.co.uk/library",
                         null);
 
@@ -57,7 +53,7 @@ public class LibrarySearch implements Command {
                         synopsis += "...";
                     }
                     status_builder.addField(String.valueOf(item.get("title_english")),
-                            "https://animesoc.co.uk/library/series/" + item.get("id") + "\n"
+                            "https://animesoc.co.uk/library/details/" + item.get("id") + "\n"
                                     + synopsis, true);
                 }
 
@@ -78,8 +74,9 @@ public class LibrarySearch implements Command {
         } catch (
                 JSONException e) {
             event.getTextChannel().sendMessage(event.getAuthor().getAsMention() + ", Sorry, there's been a problem with my ghost. I could not find an internal value!").queue();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
     }
 
     @Override
