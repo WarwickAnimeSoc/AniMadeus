@@ -69,7 +69,7 @@ public class MemberCreate implements Command {
 
             try {
                 if(rs.next()){
-                    discordTag = rs.getString("discordTag");
+                    discordTag = rs.getString("discord_tag");
                 }else{
                     throw new MemberNotFoundException();
                 }
