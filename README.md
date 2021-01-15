@@ -1,4 +1,7 @@
-### aniMadeus
+# [Deprecated] aniMadeus
+
+> :warning: This website has been replaced by [AniMadeus-py](https://github.com/WarwickAnimeSoc/AniMadeus-py).
+
 aniMadeus is a Discord Bot written in Java for use on the University of Warwick Student Union's Anime and Manga society Discord server. \
 Its main purpose is the validation of user information, though also provides functionality for a reaction-based role assignment system. \
 It is currently a work in progress and is fairly limited in overall features. \
